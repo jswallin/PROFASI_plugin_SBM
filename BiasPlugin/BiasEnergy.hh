@@ -18,12 +18,10 @@ namespace prf
     size_t MAXCONT=1000;
     size_t atm1[1000],atm2[1000],ncont;
     size_t atm1_2[1000],atm2_2[1000],ncont2;
-    size_t ntd1,ntd2,ctd1,ctd2;
     int doublet[1000];
     double atm_dist[1000],lamSC1[1000];
     double atm_dist2[1000],lamSC2[1000];
-    double lambda_SC,lambda_SC_loc,ksi_SC;
-    double kappa1,kappa2,kappa_d;
+    double lambda_SC,ksi_SC;
   };
 }
 

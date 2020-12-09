@@ -1,0 +1,11 @@
+log_level 10
+set_population random_2lcl.xml
+force_field FF08Bias=FF08+BiasEnergy(go_parameters)
+temperature 375 Kelvin
+mccyc 30000000
+iavg 100
+nrt 100
+iconf 100
+steps_per_cycle -1
+#stdout_redirect on
+#stderr_redirect on

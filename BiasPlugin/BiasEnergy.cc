@@ -1,7 +1,7 @@
-/********************************************************************************/
-/* This module implements a structure-based (Go-like) energy term to be used    */
-/* with the PROFASI protein simulations software package                        */
-/********************************************************************************/
+/*******************************************************************************/
+/* This module implements a structure-based (Go-like) energy term to be used   */
+/* with the PROFASI protein simulation software package                        */
+/*******************************************************************************/
 #include "BiasEnergy.hh"
 //#include <Aux/Constants.hh>
 //#include <Aux/RMSD_Utils.hh>
@@ -30,18 +30,19 @@ namespace prf
     size_t lst1[1000],lst2[1000];
     size_t lst1_2[1000],lst2_2[1000];
     size_t res1,res2;
-    size_t ndom1=0,ndom2=0;   
     double dist;
     double a1,a2;
 
+    /* initialize */
+    
     for (size_t i=0; i < MAXCONT; ++i) lst1[i] = lst2[i] = lst1_2[i] = lst2_2[i] = -1;
     for (size_t i=0; i < MAXCONT; ++i) atm1[i] = atm2[i] = atm_dist[i] = -1;
     for (size_t i=0; i < MAXCONT; ++i) doublet[i] = -1;
-    lambda_SC = lambda_SC_loc = 0.0;
-    kappa1 = kappa2 = 1.0;
+    lambda_SC = 0.0;
     ksi_SC = 1.0;
 
     /* root */
+
     prf_xml::node_ptr_type root = prf_xml::get_xml_tree(filename);
     if (root==nullptr or root->name()!="parameters") {
       if (root==nullptr) {
@@ -52,6 +53,7 @@ namespace prf
     }
 
     /* contact maps */
+
     prf_xml::node_ptr_type par=root->child("contact_maps");
     if (par->name()!="contact_maps"){
       prf::cerr<<"No contact map filenames found in "<<filename<<"\n";
@@ -72,58 +74,14 @@ namespace prf
     if (par->child("lambda_SC")!=nullptr) {
       lambda_SC=strtod(par->child("lambda_SC")->value().c_str(),nullptr);
     } 
-    if (par->child("lambda_SC_loc")!=nullptr) {
-      lambda_SC_loc=strtod(par->child("lambda_SC_loc")->value().c_str(),nullptr);
-    } 
     if (par->child("ksi_SC")!=nullptr) {
       ksi_SC=strtod(par->child("ksi_SC")->value().c_str(),nullptr);
     }
-
-    /* relative strengths contact maps */
-
-    par=root->child("kappa_param");
-    if (par->name()!="kappa_param"){
-      prf::cerr<<"No parameters found in "<<filename<<"\n";
-    }
-    if (par->child("kappa1")!=nullptr) {
-      kappa1=strtod(par->child("kappa1")->value().c_str(),nullptr);
-    } 
-    if (par->child("kappa2")!=nullptr) {
-      kappa2=strtod(par->child("kappa2")->value().c_str(),nullptr);
-    } 
-
-    /* relative strength within/between domains */
-
-    par=root->child("kappa_domain");
-    if (par->name()!="kappa_domain"){
-      prf::cerr<<"No parameters found in "<<filename<<"\n";
-    }
-    if (par->child("ntd1")!=nullptr) {
-      ntd1=strtod(par->child("ntd1")->value().c_str(),nullptr);
-    } 
-    if (par->child("ntd2")!=nullptr) {
-      ntd2=strtod(par->child("ntd2")->value().c_str(),nullptr);
-    } 
-    if (par->child("ctd1")!=nullptr) {
-      ctd1=strtod(par->child("ctd1")->value().c_str(),nullptr);
-    } 
-    if (par->child("ctd2")!=nullptr) {
-      ctd2=strtod(par->child("ctd2")->value().c_str(),nullptr);
-    } 
-    if (par->child("kappa_d")!=nullptr) {
-      kappa_d=strtod(par->child("kappa_d")->value().c_str(),nullptr);
-    } 
     
     prf::cout <<"<"<<filename<<"> Reading contact map 1 from file " << infile1 << "\n";
     prf::cout <<"<"<<filename<<"> Reading contact map 2 from file " << infile2 << "\n";
     prf::cout <<"<"<<filename<<"> Setting lambda_SC " << lambda_SC << "\n";
-    prf::cout <<"<"<<filename<<"> Setting lambda_SC_loc " << lambda_SC_loc << "\n";
     prf::cout <<"<"<<filename<<"> Setting ksi_SC " << ksi_SC << "\n";
-    prf::cout <<"<"<<filename<<"> Setting kappa1 " << kappa1 << "\n";
-    prf::cout <<"<"<<filename<<"> Setting kappa2 " << kappa2 << "\n";
-    prf::cout <<"<"<<filename<<"> Setting ntd1 & ntd2 " << ntd1 <<", " << ntd2 << "\n";
-    prf::cout <<"<"<<filename<<"> Setting ctd1 & ctd2 " << ctd1 <<", " << ctd2 << "\n";
-    prf::cout <<"<"<<filename<<"> Setting kappa_d " << kappa_d << "\n";
 
     std::ifstream inFile(infile1);
     std::ifstream inFile2(infile2);
@@ -144,20 +102,13 @@ namespace prf
 		      p->amino_acid(res2)->sidechain_atom(0).UniqueId() );
       atm_dist[ncont] = dist;
 
-      lamSC1[ncont] = ( std::abs((int) res1 - (int) res2) < 6 ? lambda_SC_loc : lambda_SC);	
-
-      if ( (res1 >= ntd1 && res1 <= ntd2 && res2 >= ctd1 && res2 <= ctd2 ) ||
-	   (res2 >= ntd1 && res2 <= ntd2 && res1 >= ctd1 && res1 <= ctd2 ) ) {
-	ndom1++;
-	lamSC1[ncont] *= kappa_d;
-      }
+      lamSC1[ncont] = lambda_SC;	
 
       ++ncont;
     }
     
     if (ncont > 0) prf::cout << Name() << "> Number of native contacts read 1: " << ncont << "\n";
     if (ncont >= MAXCONT) {prf::cerr << Name() << "Too many native contacts 1 \n"; exit(-1);}
-    prf::cout << Name() << "> Number of interdomain contacts 1: ndom1 " << ndom1 << "\n";
     
     if (ncont > 0) {
       std::ofstream outFile("./contactmap.sidechain.out");
@@ -182,20 +133,13 @@ namespace prf
 			p->amino_acid(res2)->sidechain_atom(0).UniqueId() );
       atm_dist2[ncont2] = dist;
 
-      lamSC2[ncont2] = ( std::abs((int)res1 - (int) res2) < 6 ? lambda_SC_loc : lambda_SC);
-
-      if ( (res1 >= ntd1 && res1 <= ntd2 && res2 >= ctd1 && res2 <= ctd2 ) ||
-	   (res2 >= ntd1 && res2 <= ntd2 && res1 >= ctd1 && res1 <= ctd2 ) ) {
-	ndom2++;
-	lamSC2[ncont] *= kappa_d;
-      }
+      lamSC2[ncont2] = lambda_SC;
 
       ++ncont2;
     }
 
     if (ncont2 > 0) prf::cout << Name() << "> Number of native contacts read 2: " << ncont2 << "\n";
     if (ncont2 >= MAXCONT) {prf::cerr << Name() << "Too many native contacts 2\n"; exit(-1);}
-    prf::cout << Name() << "> Number of interdomain contacts 2: ndom2 " << ndom2 << "\n";
     
     if (ncont2 > 0) {
       std::ofstream outFile2("./contactmap2.sidechain.out");
@@ -242,7 +186,7 @@ namespace prf
       a2 = atm2[i];
       r = (p->atom(a1).Pos() - p->atom(a2).Pos()).mag();
       dr = r - atm_dist[i];
-      v1[i] = - kappa1 * lamSC1[i] * exp(- dr * dr / 2 / ksi_SC);
+      v1[i] = - lamSC1[i] * exp(- dr * dr / 2 / ksi_SC);
     }
 
     for (size_t i = 0; i < ncont2 ; ++i) {
@@ -250,7 +194,7 @@ namespace prf
       a2 = atm2_2[i];
       r = (p->atom(a1).Pos() - p->atom(a2).Pos()).mag();
       dr = r - atm_dist2[i];
-      v2[i] = - kappa2 * lamSC2[i] * exp(- dr * dr / 2 / ksi_SC);
+      v2[i] = - lamSC2[i] * exp(- dr * dr / 2 / ksi_SC);
     }
 
     vval = 0;

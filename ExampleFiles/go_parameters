@@ -1,0 +1,13 @@
+<parameters>
+
+  <contact_maps>
+    <cmap_sc_1>contactmap.sidechain</cmap_sc_1>	
+    <cmap_sc_2>XXX</cmap_sc_2>	
+  </contact_maps>
+
+  <sc_param>
+    <lambda_SC>0.3</lambda_SC>	
+    <ksi_SC>1.0</ksi_SC>	
+  </sc_param>
+
+</parameters>
