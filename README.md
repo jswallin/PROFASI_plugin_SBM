@@ -8,11 +8,11 @@ For information on PROFASI:
 http://cbbp.thep.lu.se/activities/profasi/
 http://people.binf.ku.dk/wb/profasi/
 
-This repository uses the PROFASI plugin facility. It implements a 
-structure-based potential energy term, which can be used to modify
-the base energy function implemented in PROFASI. 
+The code in this repository uses the PROFASI plugin facility and 
+implements a structure-based potential energy term, which can be 
+used to modify the base energy function implemented in PROFASI. 
 
-The structure-based potential energy therm is described in the 
+The structure-based potential energy term is described in the 
 following publication: 
 
 Stefan Wallin and Bahman Seifi, "The C-terminal domain of 
@@ -25,7 +25,7 @@ Place the directory BiasEnergy/ in the plugins/ directory within
 the PROFASI source tree. Re-compile PROFASI, as described in 
 the general documentation. 
 
-Use: 
+Usage: 
 
 As an example of usage, see the plugin_test/ directory. 
 
