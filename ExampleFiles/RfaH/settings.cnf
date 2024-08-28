@@ -1,0 +1,12 @@
+log_level 10
+set_population H1.xml
+force_field FF08Bias=FF08+BiasEnergy(go_parameters)
+#config_updates updates.xml
+temperature 410 Kelvin
+new_obs Rg Rgyr using +CA
+mccyc 500000000
+iavg 1000
+nrt 100
+iconf 100
+steps_per_cycle -1
+stdout_redirect on
