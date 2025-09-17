@@ -1,0 +1,5 @@
+add_chain 1 "*GEWTY DDATKT FTVTE*"
+force_field FF08M=FF08+BiasEnergy
+FF08M.BiasEnergy file A.txt; file B.txt
+temperature 300 Kelvin
+

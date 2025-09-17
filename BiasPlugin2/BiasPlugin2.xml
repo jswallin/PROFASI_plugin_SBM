@@ -1,0 +1,22 @@
+<BiasPlugin2>
+<brief>ProFASi plugin SBM for ProFASi 2.4</brief>
+<help_text>This plugin returns a structure based energy term where
+two sets of contacts are used to provide competing interactions
+between different parts of the chain.
+
+
+</help_text>
+<resources>
+<resource>
+<request>BiasEnergy</request>
+<return_type>BiasEnergy</return_type>
+<wrapper>prf::FFProxy</wrapper>
+<api>1</api>
+<brief>Structure based term for 2 reference structures</brief>
+</resource>
+</resources>
+<profasi_deps>profasi_combined
+</profasi_deps>
+<generated_classes>BiasEnergy	</generated_classes>
+</BiasPlugin2>
+
