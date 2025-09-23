@@ -14,7 +14,7 @@ namespace BiasPlugin2 {
 // for a single pair of entities in contact. This is a helper class, not
 // meant for outside use. Therefore, it is not exported.
 struct SingleContactInteractionParameters {
-    double width { 1.0 }, weight { 1.0 }, mean { 0. };
+    double mean{0.}, width { 1.0 }, weight { 1 };
     size_t label {};
 };
 // Single Contact representation
