@@ -1,0 +1,6 @@
+add_chain 1 "*GDKVIITEGAFEGFQAIFTEPDGEARSMLLLNLINKEIKHSVKNTEFRKL*"
+force_field FF08M=FF08+BiasEnergy
+FF08M.BiasEnergy file contactmap_alpha_state.txt; file contactmap_beta_state.txt
+temperature 360 Kelvin
+new_obs ProteinRMSD 5ond_alpha using +BB; struct1 5OND.pdb:1:A,113,162; struct2 $::A 
+new_obs ProteinRMSD 2lcl_beta using +BB; struct1 2LCL.pdb:1:A,113,162; struc2 $::A 
