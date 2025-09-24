@@ -13,6 +13,7 @@ elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.29.20240416")
 endif()
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 project(BiasPlugin2 CXX)
+include(GNUInstallDirs)
 set(CMAKE_CXX_MODULE_STD 1)
 set(plugin BiasPlugin2)
 find_package(PROFASI REQUIRED COMPONENTS
@@ -30,13 +31,6 @@ set_target_properties(${plugin} PROPERTIES
     soversion 1.0
     clean_direct_output 1
 )
-target_include_directories(${plugin}
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-        $<INSTALL_INTERFACE:include>
-    PRIVATE
-        ${PROJECT_BINARY_DIR}
-)
 target_link_libraries(${plugin}
     PUBLIC
     profasi::profasi_combined
@@ -51,4 +45,5 @@ install(TARGETS ${plugin} EXPORT ${plugin}
 export(EXPORT ${plugin} NAMESPACE ${plugin}:: FILE ${plugin}Config.cmake )
 install(EXPORT ${plugin} NAMESPACE ${plugin}:: DESTINATION share/cmake FILE ${plugin}Config.cmake )
 #export(TARGETS ${plugin} NAMESPACE ${plugin}:: FILE ${plugin}Config.cmake)
-        
+
+
